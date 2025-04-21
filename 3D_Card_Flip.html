@@ -1,0 +1,274 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Proposal - SHRI LIFE TECHNOLOGIES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            color: #1f2937;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            animation: zoomIn 1s ease-out;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 3rem;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        h2 {
+            color: #ff6b6b;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: #ff8e53;
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #374151;
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        ul li {
+            font-size: 1.1rem;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 10px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+            cursor: pointer;
+        }
+
+        ul li:hover {
+            transform: rotateY(180deg);
+        }
+
+        ul li::before {
+            content: '🚀';
+            margin-right: 0.8rem;
+        }
+
+        ul li .front, ul li .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        ul li .front {
+            background: #fff;
+            color: #374151;
+        }
+
+        ul li .back {
+            background: #ff6b6b;
+            color: #fff;
+            transform: rotateY(180deg);
+        }
+
+        .contact {
+            background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+            color: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .contact:hover {
+            transform: scale(1.03);
+        }
+
+        .contact h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        a:hover {
+            color: #ffe082;
+        }
+
+        .badge {
+            background: #ff8e53;
+            color: #fff;
+            padding: 0.4rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2rem; }
+            .header p { font-size: 1.1rem; }
+            .container { margin: 2rem; padding: 2rem; }
+            h2 { font-size: 1.8rem; }
+            p, ul li { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📄 Service Proposal</h1>
+        <p>SHRI LIFE TECHNOLOGIES PRIVATE LIMITED</p>
+    </div>
+
+    <div class="container">
+        <h2>Company Introduction</h2>
+        <p>SHRI LIFE TECHNOLOGIES PRIVATE LIMITED is an innovation-driven fintech company, delivering secure, fast, and cost-effective services through modern API solutions. Our mission is to empower businesses by simplifying and securing their financial processes.</p>
+
+        <h2>Our Key Services <span class="badge">FEATURES</span></h2>
+        <ul>
+            <li><div class="front">Attractive Dashboard</div><div class="back">User-Friendly Interface</div></li>
+            <li><div class="front">Fund Collection via Virtual Accounts</div><div class="back">Seamless Transactions</div></li>
+            <li><div class="front">Create Multiple Virtual Accounts</div><div class="back">Flexible Options</div></li>
+            <li><div class="front">Payout Service (IMPS, NEFT, RTGS)</div><div class="back">Fast Transfers</div></li>
+            <li><div class="front">Bank Account Verification</div><div class="back">Secure Validation</div></li>
+            <li><div class="front">E-NACH Service</div><div class="back">Automated Payments</div></li>
+            <li><div class="front">Pre-paid Card Service</div><div class="back">Convenient Payments</div></li>
+            <li><div class="front">TuPe Card Service</div><div class="back">Innovative Cards</div></li>
+            <li><div class="front">Android App</div><div class="back">Mobile Access</div></li>
+            <li><div class="front">Unlimited Transactions</div><div class="back">No Limits</div></li>
+            <li><div class="front">No Maintenance Charges</div><div class="back">Cost-Free</div></li>
+            <li><div class="front">No Minimum Balance Requirement</div><div class="back">Hassle-Free</div></li>
+            <li><div class="front">Free Collection</div><div class="back">Zero Fees</div></li>
+            <li><div class="front">Nominal Fund Transfer Charges</div><div class="back">Affordable Rates</div></li>
+        </ul>
+
+        <h2>Specialized Software Solutions <span class="badge">SOFTWARE SOLUTIONS</span></h2>
+        <ul>
+            <li><div class="front">Nidhi Company Software</div><div class="back">Tailored Solutions</div></li>
+            <li><div class="front">Microfinance Software</div><div class="back">Empowering Finance</div></li>
+            <li><div class="front">NBFC Software</div><div class="back">Robust Platform</div></li>
+        </ul>
+
+        <h2>Why Choose Us?</h2>
+        <ul>
+            <li><div class="front">100% Safe and Secure Transactions</div><div class="back">Trusted Security</div></li>
+            <li><div class="front">Fast Technology Support and API Integration</div><div class="back">Seamless Integration</div></li>
+            <li><div class="front">24x7 Customer Support</div><div class="back">Always Available</div></li>
+            <li><div class="front">Transparent Charges and Reporting</div><div class="back">Clear Insights</div></li>
+        </ul>
+
+        <div class="contact">
+            <h3>📞 Contact Us</h3>
+            <p>
+                SHRI LIFE TECHNOLOGIES PRIVATE LIMITED<br>
+                Mandha Bhim Singh, Jaipur, Rajasthan<br>
+                📞 +91 7737371436<br>
+                ✉️ <a href="mailto:support@shrilife.co">support@shrilife.co</a><br>
+                🌐 <a href="https://www.shrilife.co">www.shrilife.co</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
